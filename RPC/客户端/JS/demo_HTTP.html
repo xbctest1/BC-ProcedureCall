@@ -1,0 +1,31 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+	<meta charset="UTF-8">
+	<title>Title</title>
+</head>
+<body>
+
+</body>
+</html>
+<script src="BCrpcHTTP.js"></script>
+
+<script>
+
+var rpc = new BCrpcHTTP('127.0.0.1:8000');
+rpc.call(666, b('hehe'), function (r, rx, len) {
+	console.log(r, b2s(rx))
+});
+
+
+//测试并发100个
+for (var i = 1; i <= 100; i++) {
+	_send(i)
+	function _send(i) {
+		rpc.call(i, b('hehe'), function (r, rx, len) {
+			console.log(i, r, b2s(rx))
+		});
+	}
+}
+
+</script>

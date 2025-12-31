@@ -1,0 +1,47 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+	<meta charset="UTF-8">
+	<title>Title</title>
+</head>
+<body>
+<button onclick="btn_onclick()">按钮</button>
+</body>
+</html>
+
+<script src="BCrpcWS.js"></script>
+<script>
+var rpc = new BCrpcWS('127.0.0.1:8000', 2);
+
+rpc.setcbOption(function () {
+	console.log('首次连接上(包括重连)');
+},60,1,1); //心跳根据实际需求配置
+
+
+rpc.call(1, b('hello'), function (r, ex) {
+	console.log(r, ex)
+});
+rpc.call(2, b('hello'), function (r, ex) {
+	console.log(r, ex)
+});
+
+function msgloop(self, r, dat, len) {
+	console.log(r, dat)
+	//若返回假表示用户手动退出(不继续消息循环)
+	return true;
+}
+rpc.waitMsgLoop(msgloop, function (isContinue) {
+	if (!isContinue) {
+		console.log('用户手动退出消息循环');
+		return;
+	}
+	console.log('已断开,1秒后再次重连');
+	this.resumeMsgLoop(1);
+});
+
+function btn_onclick() {
+	rpc.call(123, b('chao'), function (r, ex) {
+		console.log(r, ex);
+	});
+}
+</script>

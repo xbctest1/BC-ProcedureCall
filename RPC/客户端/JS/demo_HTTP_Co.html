@@ -1,0 +1,32 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+	<meta charset="UTF-8">
+	<title>Title</title>
+</head>
+<body>
+
+</body>
+</html>
+<script src="BCrpcHTTP_Co.js"></script>
+
+<script>
+// 使用协程化版本的示例
+async function testRPC() {
+	var rpc = new BCrpcHTTP_Co('127.0.0.1:8000');
+	var {r, rx} = await rpc.call(666, b('hehe'));
+	console.log(r, b2s(rx))
+}
+testRPC();
+
+
+// 测试100次并发
+for (var i = 1; i <= 100; i++) {
+	testConcurrency(i)
+}
+async function testConcurrency(i) {
+	var rpc = new BCrpcHTTP_Co('127.0.0.1:8000');
+	var {r, rx} = await rpc.call(i, b('hehe'));
+	console.log(i, r, b2s(rx))
+}
+</script>
